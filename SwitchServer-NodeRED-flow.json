@@ -1,0 +1,606 @@
+[
+    {
+        "id": "fe3a7838.ebde6",
+        "type": "subflow",
+        "name": "absolute Feuchtigkeit",
+        "info": "",
+        "in": [
+            {
+                "x": 40,
+                "y": 140,
+                "wires": [
+                    {
+                        "id": "c2bcb697.97055"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 640,
+                "y": 260,
+                "wires": [
+                    {
+                        "id": "bf16501f.fcf4a",
+                        "port": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "c2bcb697.97055",
+        "type": "function",
+        "z": "fe3a7838.ebde6",
+        "name": "Wasser Sättigungsmenge (Interpoliert)",
+        "func": "Temperatur=new Array(\n0,1,2,3,4,5,6,7,8,9,10,\n11,12,13,14,15,16,17,18,19,20,\n21,22,23,24,25,26,27,28,29,30,\n35,40,45,50,55,60,65,\n70,75,80,85,90,95,100);\n\nSaettigungsmenge=new Array(\n4.84843,5.19317,5.55921,5.94766,6.35967,6.79642,7.25917,7.74919,8.26783,8.81648,9.39658,\n10.0096,10.6572,11.3408,12.0623,12.8232,13.6254,14.4707,15.3611,16.2984,17.2848,\n18.3224,19.4132,20.5596,21.7638,23.0283,24.3554,25.7477,27.2079,28.7385,30.3424,\n39.5623,51.0726,65.3114,82.7730,104.011,129.642,160.344,\n196.863,240.011,290.669,349.782,418.369,497.511,588.359);\n\nX=msg.payload.temp;\nXarr=Temperatur;\nYarr=Saettigungsmenge;\n\nanz=Xarr.length-1;\nfor (i=0; i<anz; i++) {\n  if (X>=Xarr[i] && X<=Xarr[i+1]) {\n    min=i; max=i+1;\n  }\n}\n\nmsg.payload.saettigungsmenge = Yarr[min]+(Yarr[max]-Yarr[min])/(Xarr[max]-Xarr[min])*(X-Xarr[min]);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 260,
+        "y": 140,
+        "wires": [
+            [
+                "bf16501f.fcf4a"
+            ]
+        ]
+    },
+    {
+        "id": "bc3ceb61.c1d558",
+        "type": "comment",
+        "z": "fe3a7838.ebde6",
+        "name": "Input: msg.payload={\"temp\": <temperatur>, \"humidity\": <rel. Luftfeuchte>}",
+        "info": "",
+        "x": 279.5,
+        "y": 51,
+        "wires": []
+    },
+    {
+        "id": "bf16501f.fcf4a",
+        "type": "function",
+        "z": "fe3a7838.ebde6",
+        "name": "Absolute Luftfeuchte",
+        "func": "\nAbsFeuchte = msg.payload.saettigungsmenge * msg.payload.humidity / 100;\nmsg.payload = AbsFeuchte;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 460,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b5e86e1.90df21",
+        "type": "http in",
+        "z": "80152e3.abe565",
+        "name": "",
+        "url": "/IOIOSwitch",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 105.5,
+        "y": 101,
+        "wires": [
+            [
+                "3e004500.41a0ac",
+                "e3bde17a.142b78"
+            ]
+        ]
+    },
+    {
+        "id": "a84e7005.8f98a",
+        "type": "http response",
+        "z": "80152e3.abe565",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 730,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "3e004500.41a0ac",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Create JSON object",
+        "func": "// get the request parameters and save in a global var\nvar klimaInnen = msg.payload;\nglobal.set(\"klimaInnen\", klimaInnen);\nmsg.klimaInnen = klimaInnen;\n\n// Copy the global pin state to pin[0] and pin[13]\n// todo: save the entire array in a global var\nvar digiIO = [global.get(\"digiIO\")];\nmsg.payload = {\n    \"pin\": {\n        \"digitalIO\": digiIO\n    }\n}\nfor (i=0;i<45;i++)\n    digiIO.push({\"state\": false});\ndigiIO[13] = digiIO[0];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 340,
+        "y": 100,
+        "wires": [
+            [
+                "df3b567b.e7b75",
+                "a84e7005.8f98a"
+            ]
+        ]
+    },
+    {
+        "id": "df3b567b.e7b75",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "true",
+        "x": 330,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "a66f7be8.1ddc",
+        "type": "inject",
+        "z": "80152e3.abe565",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "x": 150,
+        "y": 400,
+        "wires": [
+            [
+                "cd538b75.3c8ab"
+            ]
+        ]
+    },
+    {
+        "id": "f28a499d.6e6a58",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 570,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "cd538b75.3c8ab",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Toggle global digiIO",
+        "func": "\nvar digiIO = global.get(\"digiIO\") || {\"state\": false};\n\nif (digiIO.state === true) {\n    digiIO.state = false;\n}  \nelse {\n    digiIO.state = true;\n}\nglobal.set(\"digiIO\",digiIO);\nmsg.payload = digiIO.state;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 380,
+        "y": 400,
+        "wires": [
+            [
+                "f28a499d.6e6a58"
+            ]
+        ]
+    },
+    {
+        "id": "84ceeb9f.ea2138",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "Lüftung auf Pin 13, zweiter Schalter auf 14",
+        "info": "",
+        "x": 217.5,
+        "y": 466,
+        "wires": []
+    },
+    {
+        "id": "5a429225.6c229c",
+        "type": "inject",
+        "z": "80152e3.abe565",
+        "name": "Temp / Humidity In",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 150,
+        "y": 600,
+        "wires": [
+            [
+                "233cbc5d.796e9c"
+            ]
+        ]
+    },
+    {
+        "id": "26eecc75.c744e4",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "DBG: Klima innen",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 730,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "9bcc3e19.a0b088",
+        "type": "subflow:fe3a7838.ebde6",
+        "z": "80152e3.abe565",
+        "name": "absolute Feuchtigkeit (innen)",
+        "x": 200,
+        "y": 700,
+        "wires": [
+            [
+                "a86cccb4.742328"
+            ]
+        ]
+    },
+    {
+        "id": "e5630621.bb9ee8",
+        "type": "switch",
+        "z": "80152e3.abe565",
+        "name": "Blockiere Lüftung?",
+        "property": "absFeuchteAussen",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "absFeuchteInnen",
+                "vt": "msg"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 230,
+        "y": 1080,
+        "wires": [
+            [
+                "65824ca3.847944"
+            ],
+            [
+                "26b67ee2.94af12"
+            ]
+        ]
+    },
+    {
+        "id": "a6da6aa.b8dbc18",
+        "type": "subflow:fe3a7838.ebde6",
+        "z": "80152e3.abe565",
+        "name": "absolute Feuchtigkeit (außen)",
+        "x": 200,
+        "y": 920,
+        "wires": [
+            [
+                "5ebd8885.def24"
+            ]
+        ]
+    },
+    {
+        "id": "a86cccb4.742328",
+        "type": "change",
+        "z": "80152e3.abe565",
+        "name": "Setze \"absFeuchteInnen\"",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "absFeuchteInnen",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 700,
+        "wires": [
+            [
+                "42ea3c1a.c88c34",
+                "7a4b1398.0aae2c"
+            ]
+        ]
+    },
+    {
+        "id": "42ea3c1a.c88c34",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "DBG: absFeuchteInnen",
+        "active": false,
+        "console": "false",
+        "complete": "true",
+        "x": 750,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "6a83b075.0e848",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "DBG: Klima aussen",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 730,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "5ebd8885.def24",
+        "type": "change",
+        "z": "80152e3.abe565",
+        "name": "Setze \"absFeuchteAussen\"",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "absFeuchteAussen",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 920,
+        "wires": [
+            [
+                "1e1a3c7b.e221bc",
+                "e5630621.bb9ee8"
+            ]
+        ]
+    },
+    {
+        "id": "1e1a3c7b.e221bc",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "DBG: Ergebnis-Message Objekt",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 770,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "65824ca3.847944",
+        "type": "template",
+        "z": "80152e3.abe565",
+        "name": "Lüftung blockiert!",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "Lüftung blockiert!",
+        "output": "str",
+        "x": 470,
+        "y": 1060,
+        "wires": [
+            [
+                "94f4a195.f2cba"
+            ]
+        ]
+    },
+    {
+        "id": "26b67ee2.94af12",
+        "type": "template",
+        "z": "80152e3.abe565",
+        "name": "Lüftung frei!",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "Lüftung frei!",
+        "output": "str",
+        "x": 450,
+        "y": 1120,
+        "wires": [
+            [
+                "5c4da1d6.819c68"
+            ]
+        ]
+    },
+    {
+        "id": "94f4a195.f2cba",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 670,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "5c4da1d6.819c68",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 670,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "233cbc5d.796e9c",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Ermittle Klima innen",
+        "func": "var initValues = {\n    \"temp\": 0, \n    \"humidity\": 0\n}\n//var digiIO = global.get(\"digiIO\") || {\"state\": false};\nvar klimaInnen = global.get(\"klimaInnen\") || initValues;\nmsg.payload = klimaInnen;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 440,
+        "y": 600,
+        "wires": [
+            [
+                "26eecc75.c744e4",
+                "9bcc3e19.a0b088"
+            ]
+        ]
+    },
+    {
+        "id": "7a4b1398.0aae2c",
+        "type": "http request",
+        "z": "80152e3.abe565",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "url": "http://api.openweathermap.org/data/2.5/weather?id=2867838&units=metric&&APPID=4c5e32e0fdd25a3f682a882c53a4842f",
+        "tls": "",
+        "x": 310,
+        "y": 840,
+        "wires": [
+            [
+                "3cf32aea.7e88b6"
+            ]
+        ]
+    },
+    {
+        "id": "3cf32aea.7e88b6",
+        "type": "change",
+        "z": "80152e3.abe565",
+        "name": "Return weather",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.main",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 840,
+        "wires": [
+            [
+                "6a83b075.0e848",
+                "a6da6aa.b8dbc18"
+            ]
+        ]
+    },
+    {
+        "id": "b2e62309.5838c",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "Ermittle Klima aussen",
+        "info": "",
+        "x": 160,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "55ea0d27.5a17bc",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "Ermittle Klima innen",
+        "info": "",
+        "x": 150,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "102e8aaa.ae336d",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "Lüftung blockiert durch Klima (innen vs. aussen)?",
+        "info": "",
+        "x": 230,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "5df4fd91.048844",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "Lüftung blockiert durch Tageszeit? (tagsüber)",
+        "info": "",
+        "x": 210,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "8a2a8870.f0f75",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Ermittle die Tageszeit",
+        "func": "var now = Date();\nmsg.payload = now;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 418.125,
+        "y": 1268.75,
+        "wires": [
+            [
+                "bcaa955d.3cd178"
+            ]
+        ]
+    },
+    {
+        "id": "bcaa955d.3cd178",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 688.125,
+        "y": 1287.5,
+        "wires": []
+    },
+    {
+        "id": "26eb0412.43a964",
+        "type": "inject",
+        "z": "80152e3.abe565",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 121.875,
+        "y": 1277.5,
+        "wires": [
+            [
+                "8a2a8870.f0f75"
+            ]
+        ]
+    },
+    {
+        "id": "db678531.f5442",
+        "type": "split",
+        "z": "80152e3.abe565",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 311.875,
+        "y": 1368.75,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e3bde17a.142b78",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 138.125,
+        "y": 193.75,
+        "wires": []
+    }
+]
+
