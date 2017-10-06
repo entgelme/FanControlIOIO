@@ -1,9 +1,16 @@
 [
     {
+        "id": "80152e3.abe565",
+        "type": "tab",
+        "label": "Hauptflow",
+        "disabled": false,
+        "info": ""
+    },
+    {
         "id": "fe3a7838.ebde6",
         "type": "subflow",
         "name": "absolute Feuchtigkeit",
-        "info": "",
+        "info": "Errechnet aus den Parametern temp und humidity \ndie absolute Luftfeuchte. ",
         "in": [
             {
                 "x": 40,
@@ -29,6 +36,244 @@
         ]
     },
     {
+        "id": "3fd46e05.c7f6ca",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Main",
+        "icon": "dashboard"
+    },
+    {
+        "id": "87142631.eea598",
+        "type": "ui_group",
+        "z": "",
+        "name": "FanControl1",
+        "tab": "3fd46e05.c7f6ca",
+        "disp": true,
+        "width": "13"
+    },
+    {
+        "id": "f8320380.095d8",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#1bbfff",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#0094ce",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "b5e86e1.90df21",
+        "type": "http in",
+        "z": "80152e3.abe565",
+        "name": "",
+        "url": "/IOIOSwitch",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 280,
+        "wires": [
+            [
+                "3e004500.41a0ac",
+                "e3bde17a.142b78"
+            ]
+        ]
+    },
+    {
+        "id": "a84e7005.8f98a",
+        "type": "http response",
+        "z": "80152e3.abe565",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 764.5,
+        "y": 279,
+        "wires": []
+    },
+    {
+        "id": "3e004500.41a0ac",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Create JSON object",
+        "func": "// get the request parameters and save in a global var\nvar klimaInnen = msg.payload;\nglobal.set(\"klimaInnen\", klimaInnen);\nmsg.klimaInnen = klimaInnen;\n\n// Copy the global pin state\nvar pin = global.get(\"pinDigiIO\");\nmsg.payload = {\n    \"pin\": pin\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 374.5,
+        "y": 279,
+        "wires": [
+            [
+                "df3b567b.e7b75",
+                "a84e7005.8f98a"
+            ]
+        ]
+    },
+    {
+        "id": "df3b567b.e7b75",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "true",
+        "x": 364.5,
+        "y": 379,
+        "wires": []
+    },
+    {
+        "id": "a66f7be8.1ddc",
+        "type": "inject",
+        "z": "80152e3.abe565",
+        "name": "Start Init",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "cd538b75.3c8ab"
+            ]
+        ]
+    },
+    {
+        "id": "f28a499d.6e6a58",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 750,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "cd538b75.3c8ab",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Init global pin.digitalIO und klimaInnen",
+        "func": "var mp = {klimaInnen, pin};\n\n// init global klimaInnen\nvar klimaInnen = {\n    \"temp\": 0, \n    \"humidity\": 0\n}\nglobal.set(\"klimaInnen\", klimaInnen);\nmp.klimaInnen = klimaInnen;\n\n// init global pin.digitalIO\nvar pin = global.get(\"pinDigiIO\") || {\"digitalIO\": {}};\nvar digitalIO = [];\nfor (i=0;i<45;i++) \n    digitalIO.push({\"state\": false});\npin.digitalIO = digitalIO;\nglobal.set(\"pinDigiIO\",pin);\nmp.pin = pin;\nmsg.payload = mp;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 430,
+        "y": 120,
+        "wires": [
+            [
+                "f28a499d.6e6a58"
+            ]
+        ]
+    },
+    {
+        "id": "84ceeb9f.ea2138",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "Lüftung auf Pin 13, zweiter Schalter auf 14",
+        "info": "",
+        "x": 680,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "5a429225.6c229c",
+        "type": "inject",
+        "z": "80152e3.abe565",
+        "name": "Temp / Humidity innen/aussen steuert Lüfter - Trigger",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "900",
+        "crontab": "",
+        "once": false,
+        "x": 310,
+        "y": 620,
+        "wires": [
+            [
+                "233cbc5d.796e9c"
+            ]
+        ]
+    },
+    {
         "id": "c2bcb697.97055",
         "type": "function",
         "z": "fe3a7838.ebde6",
@@ -41,6 +286,31 @@
         "wires": [
             [
                 "bf16501f.fcf4a"
+            ]
+        ]
+    },
+    {
+        "id": "26eecc75.c744e4",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "DBG: Klima innen",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 750,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "9bcc3e19.a0b088",
+        "type": "subflow:fe3a7838.ebde6",
+        "z": "80152e3.abe565",
+        "name": "absolute Feuchtigkeit (innen)",
+        "x": 220,
+        "y": 820,
+        "wires": [
+            [
+                "a86cccb4.742328"
             ]
         ]
     },
@@ -69,165 +339,6 @@
         ]
     },
     {
-        "id": "b5e86e1.90df21",
-        "type": "http in",
-        "z": "80152e3.abe565",
-        "name": "",
-        "url": "/IOIOSwitch",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 105.5,
-        "y": 101,
-        "wires": [
-            [
-                "3e004500.41a0ac",
-                "e3bde17a.142b78"
-            ]
-        ]
-    },
-    {
-        "id": "a84e7005.8f98a",
-        "type": "http response",
-        "z": "80152e3.abe565",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 730,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "3e004500.41a0ac",
-        "type": "function",
-        "z": "80152e3.abe565",
-        "name": "Create JSON object",
-        "func": "// get the request parameters and save in a global var\nvar klimaInnen = msg.payload;\nglobal.set(\"klimaInnen\", klimaInnen);\nmsg.klimaInnen = klimaInnen;\n\n// Copy the global pin state to pin[0] and pin[13]\n// todo: save the entire array in a global var\nvar digiIO = [global.get(\"digiIO\")];\nmsg.payload = {\n    \"pin\": {\n        \"digitalIO\": digiIO\n    }\n}\nfor (i=0;i<45;i++)\n    digiIO.push({\"state\": false});\ndigiIO[13] = digiIO[0];\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 340,
-        "y": 100,
-        "wires": [
-            [
-                "df3b567b.e7b75",
-                "a84e7005.8f98a"
-            ]
-        ]
-    },
-    {
-        "id": "df3b567b.e7b75",
-        "type": "debug",
-        "z": "80152e3.abe565",
-        "name": "",
-        "active": false,
-        "console": "false",
-        "complete": "true",
-        "x": 330,
-        "y": 200,
-        "wires": []
-    },
-    {
-        "id": "a66f7be8.1ddc",
-        "type": "inject",
-        "z": "80152e3.abe565",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "10",
-        "crontab": "",
-        "once": false,
-        "x": 150,
-        "y": 400,
-        "wires": [
-            [
-                "cd538b75.3c8ab"
-            ]
-        ]
-    },
-    {
-        "id": "f28a499d.6e6a58",
-        "type": "debug",
-        "z": "80152e3.abe565",
-        "name": "",
-        "active": false,
-        "console": "false",
-        "complete": "payload",
-        "x": 570,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "cd538b75.3c8ab",
-        "type": "function",
-        "z": "80152e3.abe565",
-        "name": "Toggle global digiIO",
-        "func": "\nvar digiIO = global.get(\"digiIO\") || {\"state\": false};\n\nif (digiIO.state === true) {\n    digiIO.state = false;\n}  \nelse {\n    digiIO.state = true;\n}\nglobal.set(\"digiIO\",digiIO);\nmsg.payload = digiIO.state;\n\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "x": 380,
-        "y": 400,
-        "wires": [
-            [
-                "f28a499d.6e6a58"
-            ]
-        ]
-    },
-    {
-        "id": "84ceeb9f.ea2138",
-        "type": "comment",
-        "z": "80152e3.abe565",
-        "name": "Lüftung auf Pin 13, zweiter Schalter auf 14",
-        "info": "",
-        "x": 217.5,
-        "y": 466,
-        "wires": []
-    },
-    {
-        "id": "5a429225.6c229c",
-        "type": "inject",
-        "z": "80152e3.abe565",
-        "name": "Temp / Humidity In",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 150,
-        "y": 600,
-        "wires": [
-            [
-                "233cbc5d.796e9c"
-            ]
-        ]
-    },
-    {
-        "id": "26eecc75.c744e4",
-        "type": "debug",
-        "z": "80152e3.abe565",
-        "name": "DBG: Klima innen",
-        "active": true,
-        "console": "false",
-        "complete": "payload",
-        "x": 730,
-        "y": 600,
-        "wires": []
-    },
-    {
-        "id": "9bcc3e19.a0b088",
-        "type": "subflow:fe3a7838.ebde6",
-        "z": "80152e3.abe565",
-        "name": "absolute Feuchtigkeit (innen)",
-        "x": 200,
-        "y": 700,
-        "wires": [
-            [
-                "a86cccb4.742328"
-            ]
-        ]
-    },
-    {
         "id": "e5630621.bb9ee8",
         "type": "switch",
         "z": "80152e3.abe565",
@@ -246,11 +357,11 @@
         ],
         "checkall": "true",
         "outputs": 2,
-        "x": 230,
-        "y": 1080,
+        "x": 250,
+        "y": 1200,
         "wires": [
             [
-                "65824ca3.847944"
+                "20b5e05c.1dd41"
             ],
             [
                 "26b67ee2.94af12"
@@ -262,8 +373,8 @@
         "type": "subflow:fe3a7838.ebde6",
         "z": "80152e3.abe565",
         "name": "absolute Feuchtigkeit (außen)",
-        "x": 200,
-        "y": 920,
+        "x": 220,
+        "y": 1040,
         "wires": [
             [
                 "5ebd8885.def24"
@@ -289,8 +400,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 470,
-        "y": 700,
+        "x": 490,
+        "y": 820,
         "wires": [
             [
                 "42ea3c1a.c88c34",
@@ -306,8 +417,8 @@
         "active": false,
         "console": "false",
         "complete": "true",
-        "x": 750,
-        "y": 700,
+        "x": 770,
+        "y": 820,
         "wires": []
     },
     {
@@ -315,11 +426,11 @@
         "type": "debug",
         "z": "80152e3.abe565",
         "name": "DBG: Klima aussen",
-        "active": true,
+        "active": false,
         "console": "false",
         "complete": "payload",
-        "x": 730,
-        "y": 840,
+        "x": 750,
+        "y": 960,
         "wires": []
     },
     {
@@ -341,8 +452,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 480,
-        "y": 920,
+        "x": 500,
+        "y": 1040,
         "wires": [
             [
                 "1e1a3c7b.e221bc",
@@ -358,45 +469,27 @@
         "active": true,
         "console": "false",
         "complete": "true",
-        "x": 770,
-        "y": 920,
+        "x": 790,
+        "y": 1040,
         "wires": []
-    },
-    {
-        "id": "65824ca3.847944",
-        "type": "template",
-        "z": "80152e3.abe565",
-        "name": "Lüftung blockiert!",
-        "field": "payload",
-        "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "Lüftung blockiert!",
-        "output": "str",
-        "x": 470,
-        "y": 1060,
-        "wires": [
-            [
-                "94f4a195.f2cba"
-            ]
-        ]
     },
     {
         "id": "26b67ee2.94af12",
         "type": "template",
         "z": "80152e3.abe565",
-        "name": "Lüftung frei!",
+        "name": "Lüftung frei! ",
         "field": "payload",
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
         "template": "Lüftung frei!",
         "output": "str",
-        "x": 450,
-        "y": 1120,
+        "x": 470,
+        "y": 1240,
         "wires": [
             [
-                "5c4da1d6.819c68"
+                "94f4a195.f2cba",
+                "8a2a8870.f0f75"
             ]
         ]
     },
@@ -404,24 +497,12 @@
         "id": "94f4a195.f2cba",
         "type": "debug",
         "z": "80152e3.abe565",
-        "name": "",
+        "name": "Blockade -inverse Luftfeuchte",
         "active": true,
         "console": "false",
-        "complete": "false",
-        "x": 670,
-        "y": 1060,
-        "wires": []
-    },
-    {
-        "id": "5c4da1d6.819c68",
-        "type": "debug",
-        "z": "80152e3.abe565",
-        "name": "",
-        "active": true,
-        "console": "false",
-        "complete": "false",
-        "x": 670,
-        "y": 1120,
+        "complete": "payload",
+        "x": 790,
+        "y": 1220,
         "wires": []
     },
     {
@@ -429,15 +510,18 @@
         "type": "function",
         "z": "80152e3.abe565",
         "name": "Ermittle Klima innen",
-        "func": "var initValues = {\n    \"temp\": 0, \n    \"humidity\": 0\n}\n//var digiIO = global.get(\"digiIO\") || {\"state\": false};\nvar klimaInnen = global.get(\"klimaInnen\") || initValues;\nmsg.payload = klimaInnen;\nreturn msg;",
+        "func": "var klimaInnen = global.get(\"klimaInnen\");\nmsg.payload = klimaInnen;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 440,
-        "y": 600,
+        "x": 460,
+        "y": 720,
         "wires": [
             [
                 "26eecc75.c744e4",
-                "9bcc3e19.a0b088"
+                "9bcc3e19.a0b088",
+                "7aa1bb39.03aa2c",
+                "2a6d7d72.e42022",
+                "f3cef18c.f6ae3"
             ]
         ]
     },
@@ -450,8 +534,8 @@
         "ret": "obj",
         "url": "http://api.openweathermap.org/data/2.5/weather?id=2867838&units=metric&&APPID=4c5e32e0fdd25a3f682a882c53a4842f",
         "tls": "",
-        "x": 310,
-        "y": 840,
+        "x": 330,
+        "y": 960,
         "wires": [
             [
                 "3cf32aea.7e88b6"
@@ -477,8 +561,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 500,
-        "y": 840,
+        "x": 520,
+        "y": 960,
         "wires": [
             [
                 "6a83b075.0e848",
@@ -492,8 +576,8 @@
         "z": "80152e3.abe565",
         "name": "Ermittle Klima aussen",
         "info": "",
-        "x": 160,
-        "y": 780,
+        "x": 180,
+        "y": 900,
         "wires": []
     },
     {
@@ -502,8 +586,8 @@
         "z": "80152e3.abe565",
         "name": "Ermittle Klima innen",
         "info": "",
-        "x": 150,
-        "y": 540,
+        "x": 170,
+        "y": 720,
         "wires": []
     },
     {
@@ -512,8 +596,8 @@
         "z": "80152e3.abe565",
         "name": "Lüftung blockiert durch Klima (innen vs. aussen)?",
         "info": "",
-        "x": 230,
-        "y": 1000,
+        "x": 250,
+        "y": 1120,
         "wires": []
     },
     {
@@ -522,8 +606,8 @@
         "z": "80152e3.abe565",
         "name": "Lüftung blockiert durch Tageszeit? (tagsüber)",
         "info": "",
-        "x": 210,
-        "y": 1200,
+        "x": 230,
+        "y": 1320,
         "wires": []
     },
     {
@@ -531,14 +615,15 @@
         "type": "function",
         "z": "80152e3.abe565",
         "name": "Ermittle die Tageszeit",
-        "func": "var now = Date();\nmsg.payload = now;\nreturn msg;",
+        "func": "var now = new Date();\nvar stunde = now.getHours(); // UTC Zeit\nvar month = now.getMonth();\n// Umrechnung Stunde nach Sommer/Winterzeit\n// Apr = 3, Okt = 9\nif ((month>2) || (month<10)) {\n    //Sommerzeit: D ist 2 Stunden voraus\n    stunde +=2;\n} else {\n    // Winterzeit: D ist 1 Stunde voraus\n    stunde +=1;\n}\n\nmsg.payload = stunde;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 418.125,
-        "y": 1268.75,
+        "x": 240,
+        "y": 1380,
         "wires": [
             [
-                "bcaa955d.3cd178"
+                "bcaa955d.3cd178",
+                "e3f5ff8.633428"
             ]
         ]
     },
@@ -546,61 +631,382 @@
         "id": "bcaa955d.3cd178",
         "type": "debug",
         "z": "80152e3.abe565",
-        "name": "",
+        "name": "Blockade - tagsüber",
         "active": true,
         "console": "false",
-        "complete": "false",
-        "x": 688.125,
-        "y": 1287.5,
+        "complete": "payload",
+        "x": 760,
+        "y": 1500,
         "wires": []
-    },
-    {
-        "id": "26eb0412.43a964",
-        "type": "inject",
-        "z": "80152e3.abe565",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "x": 121.875,
-        "y": 1277.5,
-        "wires": [
-            [
-                "8a2a8870.f0f75"
-            ]
-        ]
-    },
-    {
-        "id": "db678531.f5442",
-        "type": "split",
-        "z": "80152e3.abe565",
-        "name": "",
-        "splt": "\\n",
-        "spltType": "str",
-        "arraySplt": 1,
-        "arraySpltType": "len",
-        "stream": false,
-        "addname": "",
-        "x": 311.875,
-        "y": 1368.75,
-        "wires": [
-            []
-        ]
     },
     {
         "id": "e3bde17a.142b78",
         "type": "debug",
         "z": "80152e3.abe565",
         "name": "",
-        "active": true,
+        "active": false,
         "console": "false",
         "complete": "false",
-        "x": 138.125,
-        "y": 193.75,
+        "x": 172.625,
+        "y": 372.75,
         "wires": []
+    },
+    {
+        "id": "25b84cbb.d717cc",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "Initialisierung des globalen pin-Objekts (einmal bei Programmstart aufgerufen)",
+        "info": "",
+        "x": 334.5,
+        "y": 45,
+        "wires": []
+    },
+    {
+        "id": "737402.80fffc",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "REST I/F - in:Klima innen, out: pin object (JSON)",
+        "info": "Übernimmt die als Parameter übergebenen Werte \ndes Klimas im Innenraum (temp, humidity) in die \nglobale Variable \"klimaInnen\".\n\nLiefert den Stand des (globalen) \"pin\"-Objekts als JSON-Objekt zurück\n{\n    pin: \n        digitalIO[].state\n}",
+        "x": 240,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "e3f5ff8.633428",
+        "type": "switch",
+        "z": "80152e3.abe565",
+        "name": "Blockiere Lüftung tagsüber",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gte",
+                "v": "6",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 200,
+        "y": 1540,
+        "wires": [
+            [
+                "8bb1c18a.ad6028"
+            ],
+            [
+                "5acad395.d5164c"
+            ]
+        ]
+    },
+    {
+        "id": "20b5e05c.1dd41",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Lüftung blockiert! (Luftfeuchte)",
+        "func": "var message = \"Lüftung blockiert! (Luftfeuchte)\";\nmsg.payload = message;\n\nvar pin = global.get(\"pinDigiIO\");\npin.digitalIO[0].state = false;\npin.digitalIO[13].state = false;\nglobal.set(\"pinDigiIO\", pin);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 1180,
+        "wires": [
+            [
+                "94f4a195.f2cba"
+            ]
+        ]
+    },
+    {
+        "id": "5528d4f1.20a4dc",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "dbg",
+        "func": "msg.absFeuchteAussen = 20;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 680,
+        "y": 1120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8bb1c18a.ad6028",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Lüftung blockiert! (tagsüber)",
+        "func": "var message = \"Lüftung blockiert! (tagsüber)\";\nmsg.payload = message;\n\nvar pin = global.get(\"pinDigiIO\");\npin.digitalIO[0].state = false;\npin.digitalIO[13].state = false;\nglobal.set(\"pinDigiIO\", pin);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 460,
+        "y": 1500,
+        "wires": [
+            [
+                "bcaa955d.3cd178"
+            ]
+        ]
+    },
+    {
+        "id": "5ad3e764.a22be",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "dbg",
+        "func": "msg.payload = 3\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 670,
+        "y": 1400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5acad395.d5164c",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Lüftung frei! (nachts)",
+        "func": "var message = \"Lüftung frei!\";\nmsg.payload = message;\n\nvar pin = global.get(\"pinDigiIO\");\npin.digitalIO[0].state = true;\npin.digitalIO[13].state = true;\nglobal.set(\"pinDigiIO\", pin);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 460,
+        "y": 1560,
+        "wires": [
+            [
+                "bcaa955d.3cd178"
+            ]
+        ]
+    },
+    {
+        "id": "cfbb63c6.3992f8",
+        "type": "comment",
+        "z": "80152e3.abe565",
+        "name": "Hauptfunktion: Lüftersteuerung nach Klima (innen/aussen)",
+        "info": "",
+        "x": 280,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "7aa1bb39.03aa2c",
+        "type": "change",
+        "z": "80152e3.abe565",
+        "name": "Humidity",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.humidity",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Humidity",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 680,
+        "wires": [
+            [
+                "50eb85a4.b3bdf4",
+                "32685c1b.e5cc7c"
+            ]
+        ]
+    },
+    {
+        "id": "2a6d7d72.e42022",
+        "type": "change",
+        "z": "80152e3.abe565",
+        "name": "Temp",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.temp",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Temperature",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 810,
+        "y": 720,
+        "wires": [
+            [
+                "50eb85a4.b3bdf4",
+                "188ce6fd.023831"
+            ]
+        ]
+    },
+    {
+        "id": "50eb85a4.b3bdf4",
+        "type": "debug",
+        "z": "80152e3.abe565",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 1060,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "32685c1b.e5cc7c",
+        "type": "ui_chart",
+        "z": "80152e3.abe565",
+        "name": "",
+        "group": "87142631.eea598",
+        "order": 0,
+        "width": "13",
+        "height": "4",
+        "label": "Luftfeuchte",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 1210,
+        "y": 680,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "188ce6fd.023831",
+        "type": "ui_chart",
+        "z": "80152e3.abe565",
+        "name": "",
+        "group": "87142631.eea598",
+        "order": 0,
+        "width": "13",
+        "height": "4",
+        "label": "Temperatur",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 1210,
+        "y": 720,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "f3cef18c.f6ae3",
+        "type": "function",
+        "z": "80152e3.abe565",
+        "name": "Switch state",
+        "func": "msg.topic = \"Fan\"\nvar pin = global.get(\"pinDigiIO\");\nif (pin.digitalIO[13].state) \n    msg.payload = 1;\nelse\n    msg.payload = 0;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 830,
+        "y": 640,
+        "wires": [
+            [
+                "50eb85a4.b3bdf4",
+                "2cdfe0b1.248128"
+            ]
+        ]
+    },
+    {
+        "id": "2cdfe0b1.248128",
+        "type": "ui_chart",
+        "z": "80152e3.abe565",
+        "name": "",
+        "group": "87142631.eea598",
+        "order": 0,
+        "width": "13",
+        "height": "2",
+        "label": "Lüfter",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "1",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 1190,
+        "y": 640,
+        "wires": [
+            [],
+            []
+        ]
     }
 ]
-
